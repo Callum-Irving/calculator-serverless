@@ -49,9 +49,9 @@ async fn handler(
     };
 
     // Make sure we parsed everything
-    //if !rest.is_empty() {
-    //    return Ok(json!("ERROR: failed to parse all input"));
-    //}
+    if !rest.is_empty() {
+        return Err(Box::new(CalcError::ParseError));
+    }
 
     // Create evaluation context
     let mut ctx = CalcContext::new();
@@ -71,7 +71,7 @@ async fn handler(
         status_code: 200,
         headers: HeaderMap::new(),
         multi_value_headers: HeaderMap::new(),
-        body: Some(Body::Text("Hello world".to_owned())),
+        body: Some(Body::Text(json!({ "results": results }).to_string())),
         is_base64_encoded: Some(false),
     };
 
