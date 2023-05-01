@@ -1,3 +1,4 @@
+use aws_lambda_events::http::header::ACCESS_CONTROL_ALLOW_ORIGIN;
 use aws_lambda_events::{
     encodings::Body,
     event::apigw::{ApiGatewayProxyRequest, ApiGatewayProxyResponse},
@@ -66,10 +67,13 @@ async fn handler(
         results.push(res);
     }
 
+    let mut headers = HeaderMap::new();
+    headers.insert(ACCESS_CONTROL_ALLOW_ORIGIN, "*".parse().unwrap());
+
     // Create response
     let resp = ApiGatewayProxyResponse {
         status_code: 200,
-        headers: HeaderMap::new(),
+        headers,
         multi_value_headers: HeaderMap::new(),
         body: Some(Body::Text(json!({ "results": results }).to_string())),
         is_base64_encoded: Some(false),
